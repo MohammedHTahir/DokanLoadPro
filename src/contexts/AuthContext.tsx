@@ -5,6 +5,7 @@ interface User {
   id: string;
   email: string;
   name?: string;
+  purchases: string[]; // Array to hold purchased item IDs or details
 }
 
 interface AuthContextType {
@@ -12,6 +13,7 @@ interface AuthContextType {
   login: (email: string, password: string) => Promise<void>;
   signup: (email: string, password: string) => Promise<void>;
   logout: () => void;
+  recordPurchase: (productId: string) => void; // Function to record a purchase
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -34,7 +36,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       const mockUser = {
         id: Math.random().toString(36).substr(2, 9),
         email,
-        name: email.split('@')[0]
+        name: email.split('@')[0],
+        purchases: [] // Initialize purchases as an empty array
       };
       
       setUser(mockUser);
@@ -60,7 +63,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       const mockUser = {
         id: Math.random().toString(36).substr(2, 9),
         email,
-        name: email.split('@')[0]
+        name: email.split('@')[0],
+        purchases: [] // Initialize purchases as an empty array
       };
       
       setUser(mockUser);
@@ -89,8 +93,18 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     });
   };
 
+  const recordPurchase = (productId: string) => {
+    if (user) {
+      setUser(prevUser => ({
+        ...prevUser,
+        purchases: [...(prevUser.purchases || []), productId],
+      }));
+      localStorage.setItem('user', JSON.stringify({ ...user, purchases: [...(user.purchases || []), productId] }));
+    }
+  };
+
   return (
-    <AuthContext.Provider value={{ user, login, signup, logout }}>
+    <AuthContext.Provider value={{ user, login, signup, logout, recordPurchase }}>
       {children}
     </AuthContext.Provider>
   );

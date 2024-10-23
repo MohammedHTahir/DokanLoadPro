@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { ShoppingCart, Trash2 } from 'lucide-react';
 
 const Cart: React.FC = () => {
-  const { cart, removeFromCart, clearCart, getCartTotal } = useCart();
+  const { cart, removeFromCart, clearCart, getCartTotal, checkout } = useCart();
 
   if (cart.length === 0) {
     return (
@@ -44,7 +44,7 @@ const Cart: React.FC = () => {
           <Button variant="outline" onClick={clearCart} className="mr-2">
             Clear Cart
           </Button>
-          <Button>Checkout</Button>
+          <Button onClick={checkout}>Checkout</Button> {/* Ensure this calls checkout */}
         </div>
       </div>
     </div>
