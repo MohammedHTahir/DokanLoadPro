@@ -22,6 +22,7 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet"
 import { Badge } from "@/components/ui/badge"
+import { SignIn, SignUp } from '@clerk/clerk-react'; // Import SignIn and SignUp components
 
 function AppContent() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -126,6 +127,8 @@ function AppContent() {
               <UserProfile />
             </ProtectedRoute>
           } />
+          <Route path="/sign-in/*" element={<SignIn />} /> {/* Add SignIn route */}
+          <Route path="/sign-up/*" element={<SignUp />} /> {/* Add SignUp route */}
         </Routes>
       </main>
 
