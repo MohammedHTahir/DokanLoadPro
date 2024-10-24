@@ -23,10 +23,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const { toast } = useToast();
 
   useEffect(() => {
-    // Check for saved user in localStorage
     const savedUser = localStorage.getItem('user');
     if (savedUser) {
-      setUser(JSON.parse(savedUser));
+      const parsedUser = JSON.parse(savedUser);
+      console.log("Loaded user from localStorage:", parsedUser); // Add this line
+      setUser(parsedUser);
     }
   }, []);
 
@@ -59,17 +60,17 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const login = async (email: string, password: string) => {
     try {
-      // Mock login success
       const mockUser = {
         id: Math.random().toString(36).substr(2, 9),
         email,
         name: email.split('@')[0],
-        purchases: [] // Initialize purchases as an empty array
+        purchases: []
       };
       
       setUser(mockUser);
       localStorage.setItem('user', JSON.stringify(mockUser));
-      
+      console.log("User saved to localStorage:", mockUser); // Add this line
+
       toast({
         title: "Welcome back!",
         description: "Successfully logged in"
@@ -95,11 +96,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const recordPurchase = (productId: string) => {
     if (user) {
-      setUser(prevUser => ({
-        ...prevUser,
-        purchases: [...(prevUser.purchases || []), productId],
-      }));
-      localStorage.setItem('user', JSON.stringify({ ...user, purchases: [...(user.purchases || []), productId] }));
+      const updatedUser = {
+        ...user,
+        purchases: [...user.purchases, productId],
+      };
+      setUser(updatedUser);
+      localStorage.setItem('user', JSON.stringify(updatedUser));
+      console.log("Purchase recorded:", updatedUser); // Add this line for debugging
     }
   };
 

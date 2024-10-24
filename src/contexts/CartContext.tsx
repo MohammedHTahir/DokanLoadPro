@@ -1,6 +1,7 @@
 import React, { createContext, useState, useContext, useEffect } from 'react';
 import { Product } from '@/data/products';
 import { loadStripe } from '@stripe/stripe-js';
+import { useAuth } from './AuthContext'; // Import useAuth
 
 interface CartItem extends Product {
   quantity: number;
@@ -18,7 +19,6 @@ interface CartContextType {
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
 
-// Ensure this is set correctly
 const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY);
 
 export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -26,6 +26,8 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const savedCart = localStorage.getItem('cart');
     return savedCart ? JSON.parse(savedCart) : [];
   });
+
+  const { recordPurchase } = useAuth(); // Use the recordPurchase method
 
   useEffect(() => {
     localStorage.setItem('cart', JSON.stringify(cart));
@@ -60,20 +62,22 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const checkout = async () => {
-    // Simulate a successful payment
-    console.log("Simulating payment...");
+    try {
+      console.log("Simulating purchase...");
 
-    // Mock a delay to simulate processing time
-    await new Promise((resolve) => setTimeout(resolve, 1000));
+      await new Promise((resolve) => setTimeout(resolve, 1000));
 
-    // After "payment" is successful, you can handle the download
-    alert("Payment successful! You can now download your files.");
+      // Record each purchase
+      cart.forEach(item => {
+        recordPurchase(item.id);
+      });
 
-    // Here you can trigger the download of the purchased file
-    // For example, you can redirect to a download link or open a file
-    // Replace 'your-file-url' with the actual URL of the file to download
-    const downloadUrl = 'http://example.com/path/to/your/file.zip'; // Replace with your file URL
-    window.open(downloadUrl, '_blank');
+      clearCart();
+
+      window.location.href = `${import.meta.env.CLIENT_URL}/success`;
+    } catch (error) {
+      console.error("Checkout error:", error);
+    }
   };
 
   return (

@@ -23,6 +23,9 @@ import {
 } from "@/components/ui/sheet"
 import { Badge } from "@/components/ui/badge"
 import { SignIn, SignUp } from '@clerk/clerk-react'; // Import SignIn and SignUp components
+import Success from '@/components/Success';
+import Cancel from '@/components/Cancel';
+import SellerDashboard from '@/components/SellerDashboard';
 
 function AppContent() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -129,6 +132,13 @@ function AppContent() {
           } />
           <Route path="/sign-in/*" element={<SignIn />} /> {/* Add SignIn route */}
           <Route path="/sign-up/*" element={<SignUp />} /> {/* Add SignUp route */}
+          <Route path="/success" element={<Success />} />
+          <Route path="/cancel" element={<Cancel />} />
+          <Route path="/seller-dashboard" element={
+            <ProtectedRoute>
+              <SellerDashboard />
+            </ProtectedRoute>
+          } />
         </Routes>
       </main>
 
